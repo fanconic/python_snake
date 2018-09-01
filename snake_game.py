@@ -64,17 +64,29 @@ while True:
     # Defining new head, if food is eaten
     new_head = [snake[0][0], snake[0][1]]
 
-    if key == curses.KEY_DOWN:
-        new_head[0] += 1
-
-    if key == curses.KEY_UP:
-        new_head[0] -= 1
-
-    if key == curses.KEY_LEFT:
+    def goLeft(new_head):
         new_head[1] -= 1
 
-    if key == curses.KEY_RIGHT:
+    def goRight(new_head):
         new_head[1] += 1
+
+    def goDown(new_head):
+        new_head[0] += 1
+
+    def goUp(new_head):
+        new_head[0] -= 1
+
+    if key == curses.KEY_DOWN:
+        goDown(new_head)
+
+    if key == curses.KEY_UP:
+        goUp(new_head)
+
+    if key == curses.KEY_LEFT:
+        goLeft(new_head)
+
+    if key == curses.KEY_RIGHT:
+        goRight(new_head)
 
     snake.insert(0, new_head)
 
