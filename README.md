@@ -1,5 +1,6 @@
 # python_snake
-This repository contains an implementation of the snake game written in python. The main goal of this project is to implement an autonomous player with reinforced learning.
+This repository contains an implementation of the snake game written in python. The main goal of this project is to implement an autonomous player with reinforced learning. Some academic information can be found here:
+http://cs229.stanford.edu/proj2016spr/report/060.pdf
 
 Suggested tools:
 Python 3.6
