@@ -7,6 +7,8 @@ based on: https://www.youtube.com/watch?v=rbasThWVb-c
 '''
 import random
 import curses
+import config
+import actions
 
 # Initialize Screen and cursor
 # pies is the ammount of pies eaten
@@ -14,10 +16,13 @@ import curses
 # Timeout indicates the milliseconds after the screen is refreshed
 pies = 0
 speedset = False
-timeout = 100
+timeout = 200
 screen = curses.initscr()
 curses.curs_set(0)
-screen_height, screen_width = screen.getmaxyx()
+
+# initializing a playing field from the config file
+screen_height = config.screen_heigth
+screen_width = config.screen_width
 
 # Create new window (Starting at the top left of the screen)
 # It shall accept key inputs
@@ -49,12 +54,18 @@ poison = [
     ]
 window.addch(poison[0], poison[1], curses.ACS_DIAMOND)
 
-# Key actions
-key = curses.KEY_RIGHT
+# Action of the snake
+action = 'r'
+i = 0
 
+# Playing
 while True:
     next_key = window.getch()
-    key = key if next_key == -1 else next_key
+    executions = actions.actions
+    if i == 8:
+        i = 0
+
+    action = executions[i]
 
     # Losing the game (if it touches boarders or itself)
     if snake[0][0] in [0,screen_height-1] or snake[0][1] in [0,screen_width-1] or snake[0] in snake[1:] or pies < 0:
@@ -63,32 +74,25 @@ while True:
 
     # Defining new head, if food is eaten
     new_head = [snake[0][0], snake[0][1]]
-
-    def goLeft(new_head):
-        new_head[1] -= 1
-
-    def goRight(new_head):
-        new_head[1] += 1
-
-    def goDown(new_head):
+        
+    # Go Downwards
+    if action == 'd':
         new_head[0] += 1
 
-    def goUp(new_head):
+    # Go Upwards
+    if action == 'u':
         new_head[0] -= 1
 
-    if key == curses.KEY_DOWN:
-        goDown(new_head)
+    # Go Left
+    if action == 'l':
+        new_head[1] -= 1
 
-    if key == curses.KEY_UP:
-        goUp(new_head)
-
-    if key == curses.KEY_LEFT:
-        goLeft(new_head)
-
-    if key == curses.KEY_RIGHT:
-        goRight(new_head)
-
+    # Go Right
+    if action == 'r':
+        new_head[1] += 1
+    
     snake.insert(0, new_head)
+    i += 1
 
     # Snake runs into the food
     if snake[0] == food:
