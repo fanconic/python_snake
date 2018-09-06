@@ -21,12 +21,12 @@ screen = curses.initscr()
 curses.curs_set(0)
 
 # initializing a playing field from the config file
-screen_height = config.screen_heigth
+screen_heigth = config.screen_heigth
 screen_width = config.screen_width
 
 # Create new window (Starting at the top left of the screen)
 # It shall accept key inputs
-window = curses.newwin(screen_height, screen_width, 0, 0)
+window = curses.newwin(screen_heigth, screen_width, 0, 0)
 window.keypad(1)
 window.timeout(timeout)
 
@@ -49,8 +49,8 @@ window.addch(int(food[0]),int(food[1]), curses.ACS_PI)
 
 # Generate initial poissonous food
 poison = [
-    random.randint(1,screen_height-1), 
-    random.randint(1,screen_height-1)
+    random.randint(1,screen_heigth-1), 
+    random.randint(1,screen_heigth-1)
     ]
 window.addch(poison[0], poison[1], curses.ACS_DIAMOND)
 
@@ -68,7 +68,7 @@ while True:
     action = executions[i]
 
     # Losing the game (if it touches boarders or itself)
-    if snake[0][0] in [0,screen_height-1] or snake[0][1] in [0,screen_width-1] or snake[0] in snake[1:] or pies < 0:
+    if snake[0][0] in [0,screen_heigth-1] or snake[0][1] in [0,screen_width-1] or snake[0] in snake[1:] or pies < 0:
         curses.endwin()
         quit()
 
@@ -104,7 +104,7 @@ while True:
 
             # Generate new food at random new position
             new_food = [
-                random.randint(1,screen_height-1),
+                random.randint(1,screen_heigth-1),
                 random.randint(1, screen_width -1)
             ]
             
@@ -129,7 +129,7 @@ while True:
 
             # Generate new poison at random new position
             new_poison = [
-                random.randint(1,screen_height-1),
+                random.randint(1,screen_heigth-1),
                 random.randint(1, screen_width -1)
             ]
             

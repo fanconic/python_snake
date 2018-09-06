@@ -7,6 +7,8 @@ Author: Claudio
 screen_width = 32
 screen_heigth = 32
 
+timeout = 200
+
 # Rewards for later training
 reward_pie = 500
 reward_poison = -500
