@@ -22,7 +22,7 @@ class SnakeGame():
     # initiliazing the screen
     def render_init(self):
         curses.initscr()
-        window = curses.newwin(self.screen_heigth, self.screen_width, 0, 0)
+        window = curses.newwin(self.screen_heigth+2, self.screen_width+2, 0, 0)
         curses.curs_set(0)
         window.nodelay(1)
         window.timeout(config.timeout)
@@ -36,10 +36,15 @@ class SnakeGame():
     # Rendering the game
     def render(self):
         self.window.clear()
-        self.window.boarders(0)
-        self.window.addstr(0, 2, 'Pies: ' + str(self.pies))
-        self.window.addch(self.food[0], self.food[1], curses.ACS_CKBOARD)
+        self.window.border(0)
+        self.window.addstr(0, 2, 'Pies: ' + str(self.pies) + ' ')
+        self.window.addch(self.food[0], self.food[1], curses.ACS_PI)
         self.window.addch(self.poison[0], self.poison[1], curses.ACS_DIAMOND)
+        for i, point in enumerate(self.snake):
+            if i == 0:
+                self.window.addch(point[0], point[1], '🔸')
+            else:
+                self.window.addch(point[0], point[1], '🔹')
         self.window.getch()
 
     # Starting a game of snake
@@ -59,19 +64,19 @@ class SnakeGame():
 
     # initializing the snake in the game
     def snake_init(self):
-        self.snake_x = self.screen_width/4
-        self.snake_y = self.screen_heigth/2
-        self.snake = [
-            [self.snake_y, self.snake_x],
-            [self.snake_y, self.snake_x-1],
-            [self.snake_y, self.snake_x-2]
-        ]
+       x = random.randint(5, self.screen_width -5)
+       y = random.randint(5, self.screen_heigth -5)
+       self.snake = []
+       vertical = random.randint(0,1) == 0
+       for i in range(3):
+           point = [x+i,y] if vertical else [x, y+i]
+           self.snake.insert(0,point)
 
     # Generating Food
     def generate_food(self):
         food = []
         while food == []:
-            food = [random.randint(1, self.screen_heigth-1), random.randint(1,self.screen_width-1)]
+            food = [random.randint(1, self.screen_width-1), random.randint(1,self.screen_heigth-1)]
             if food in self.snake:
                 food = []
         self.food = food
@@ -80,16 +85,23 @@ class SnakeGame():
     def generate_poison(self):
         poison = []
         while poison == []:
-            poison = [random.randint(1, self.screen_heigth-1), random.randint(1,self.screen_width-1)]
+            poison = [random.randint(1, self.screen_width-1), random.randint(1,self.screen_heigth-1)]
             if poison in self.snake:
                 poison = []
         self.poison = poison
 
     # Next step to take for the snake
     def step(self, key):
+        # 0 - up
+        # 1 - right
+        # 2 - down
+        # 3 - left
         # Check if game is over
         if self.done:
             self.end_game()
+            
+        # Create a new head
+        self.create_new_head(key)
 
         # eat food
         if self.food_eaten():
@@ -97,30 +109,39 @@ class SnakeGame():
             self.generate_food()
 
         # eat poison
-        if self.poison_eaten():
+        elif self.poison_eaten():
             self.pies -= 1
             self.generate_poison()
 
+        else:
+            self.remove_tail()
+
+        self.collision()
+        if self.gui:
+            self.render()
+
+        return self.generate_observations()    
+        
     # Depending on were the snake moves the new is formed
     def create_new_head(self, action): 
         new_head = [self.snake[0][0], self.snake[0][1]]
 
-        # Go Downwards
-        if action == 'd':
-            new_head[0] += 1
-
-        # Go Upwards
-        if action == 'u':
+        # Go Upwards, code 0
+        if action == 0:
             new_head[0] -= 1
 
-        # Go Left
-        if action == 'l':
+        # Go Right, code 1
+        if action == 1:
+            new_head[1] += 1
+
+        # Go Downwards, code 2
+        if action == 2:
+            new_head[0] += 1
+
+        # Go Left, code 3
+        if action == 3:
             new_head[1] -= 1
 
-        # Go Right
-        if action == 'r':
-            new_head[1] += 1
-        
         self.snake.insert(0, new_head)
 
     # Removing the last part of the snake
@@ -137,10 +158,12 @@ class SnakeGame():
 
     # Check for collision or if the ammount of pies is negative
     def collision(self):
-        if( self.snake[0][0] in [0,self.screen_heigth-1] or
-            self.snake[0][1] in [0,self.screen_width-1] or
-            self.snake[0] in self.snake[1:] or
-            self.pies < 0 ):
+        if (self.snake[0][0] == 0 or
+            self.snake[0][0] == self.screen_width + 1 or
+            self.snake[0][1] == 0 or
+            self.snake[0][1] == self.screen_heigth + 1 or
+            self.snake[0] in self.snake[1:-1] or
+            self.pies < 0):
             self.done = True
     
     # Returning observations for the reinforcement learning
@@ -148,8 +171,7 @@ class SnakeGame():
         return self.done, self.pies, self.snake, self.food, self.poison
 
 if __name__ == "__main__":
-    game = SnakeGame(gui = True)
-    game.start
-    actions = ['u', 'd', 'r', 'l']
-    for _ in range (20):
-        game.step(actions[random.randint(0,3)])
+    game = SnakeGame(gui= True)
+    game.start()
+    for _ in range(20):
+        game.step(random.randint(0,3))

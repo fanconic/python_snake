@@ -4,8 +4,8 @@ Configuration file with details needed for the snake game
 Author: Claudio
 '''
 # Size of the playing field of 2³ x 4²
-screen_width = 32
-screen_heigth = 32
+screen_width = 20
+screen_heigth = 20
 
 timeout = 200
 
