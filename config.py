@@ -7,6 +7,8 @@ Author: Claudio
 screen_width = 20
 screen_heigth = 20
 
+n_poison = 5
+
 timeout = 200
 
 # Rewards for later training

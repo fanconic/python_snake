@@ -1,3 +1,7 @@
 .vscode
 __pycache__
 log
+checkpoint
+snake_nn_2.tflearn.data-00000-of-00001
+snake_nn_2.tflearn.index
+snake_nn_2.tflearn.meta

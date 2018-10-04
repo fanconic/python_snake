@@ -64,8 +64,8 @@ class SnakeGame():
 
     # initializing the snake in the game
     def snake_init(self):
-       x = random.randint(5, self.screen_width -5)
-       y = random.randint(5, self.screen_heigth -5)
+       x = random.randint(2, self.screen_width -2)
+       y = random.randint(2, self.screen_heigth -2)
        self.snake = []
        vertical = random.randint(0,1) == 0
        for i in range(3):
@@ -158,11 +158,11 @@ class SnakeGame():
 
     # Check for collision or if the ammount of pies is negative
     def collision(self):
-        if (self.snake[0][0] == 0 or
-            self.snake[0][0] == self.screen_width + 1 or
-            self.snake[0][1] == 0 or
-            self.snake[0][1] == self.screen_heigth + 1 or
-            self.snake[0] in self.snake[1:-1] or
+        if (self.snake[0][0] in [0, self.screen_heigth+1] or
+            self.snake[0][1] in [0,self.screen_width+1] or
+            self.snake[0] in self.snake[1:] or
+            self.snake[:][0] in [0, self.screen_heigth+1] or
+            self.snake[:][1] in [0, self.screen_width+1] or
             self.pies < 0):
             self.done = True
     
@@ -170,6 +170,7 @@ class SnakeGame():
     def generate_observations(self):
         return self.done, self.pies, self.snake, self.food, self.poison
 
+# Main instructions
 if __name__ == "__main__":
     game = SnakeGame(gui= True)
     game.start()

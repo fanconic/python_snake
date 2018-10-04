@@ -139,7 +139,7 @@ class SnakeNN:
         for _ in range(self.goal_steps):
             predictions = []
 
-            for _ in range(-1,2):
+            for action in range(-1,2):
                 predictions.append(model.predict(self.add_action_to_observation(previous_observation, action).reshape(-1,4,1)))
 
             action = np.argmax(np.array(predictions))
@@ -203,4 +203,6 @@ class SnakeNN:
 
 # Start the process from terminal
 if __name__ == "__main__":
-    SnakeNN().train()
+    #SnakeNN().train()
+    #SnakeNN().visualize()
+    SnakeNN().test()
